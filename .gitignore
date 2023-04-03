@@ -3,3 +3,7 @@
 
 #忽略build
 build/
+/excelx/build/
+
+#忽略.xlsx
+*.xlsx

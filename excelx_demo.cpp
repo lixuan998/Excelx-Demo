@@ -7,6 +7,7 @@
 void TestStyle(ExcelOp &op);
 void TestRepacement(ExcelOp &op);
 void TestWriteBatched(ExcelOp &op);
+void TestDrawCell(ExcelOp &op);
 
 int main(int argc, char *argv[])
 {
@@ -22,8 +23,7 @@ int main(int argc, char *argv[])
     //TestWriteBatched(op2);
 
     //TestRepacement(op);
-    op.AddSheet();
-    
+    TestDrawCell(op);
     //op1.close();
     //op2.close();
     op.close();
@@ -83,4 +83,9 @@ void TestWriteBatched(ExcelOp &op)
     }
 
     op.WriteBatch(1, info);
+}
+
+void TestDrawCell(ExcelOp &op)
+{
+    op.DrawCell(1, "0", "0", "0", "0");
 }

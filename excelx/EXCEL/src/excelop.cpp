@@ -237,11 +237,26 @@ bool ExcelOp::WriteCell(int sheet_sn, QString cell_sn, QString text, QString cel
 
 bool ExcelOp::DrawCell(int sheet_sn, QString from_col, QString from_row, QString to_col, QString to_row, double times)
 {
-    QString xml_rels_path = cache_path + WORKSHEETS_RELS_PATH + "sheet" + QString::number(sheet_sn) + ".xml.rels";
+    QString xml_rels_path = cache_path + WORKSHEETS_RELS_PATH;
     QString drawings_path = cache_path + XL_PATH + "drawings/";
-    QString drawings_rels_path = drawings_path + "_rels/";
+    QString drawing_rels_path = drawings_path + "_rels/";
+    QString media_path = cache_path + MEDIA_PATH;
     if(!QFile::exists(drawings_path)) dir.mkpath(drawings_path);
-    if(!QFile::exists(drawings_rels_path)) dir.mkpath(drawings_rels_path);
+    if(!QFile::exists(drawing_rels_path)) dir.mkpath(drawing_rels_path);
+    if(!QFile::exists(media_path)) dir.mkpath(media_path);
+    if(!QFile::exists(xml_rels_path)) dir.mkpath(xml_rels_path);
+
+    QString sheetn_xml_rels_path = xml_rels_path + "sheet" + QString::number(sheet_sn) + ".xml.rels";
+    QString drawingn_xml_rels_path = drawing_rels_path + "drawing" + QString::number(sheet_sn) + ".xml.rels";
+    QString drawingn_path = drawings_path + "drawing" + QString::number(sheet_sn) + ".xml";
+    if(!QFile::exists(sheetn_xml_rels_path))
+    {
+        QString tmp;
+        QString sheetn_xml_rels_model_path = XML_MODEL_PATH + "new_worksheets_xml_rels.xml";
+        XmlOp::LoadXml(sheetn_xml_rels_model_path, tmp);
+        XmlOp::SaveXml(sheetn_xml_rels_path, tmp);
+    }
+
 }
 
 QString ExcelOp::GetCellAttribute(int sheet_sn, QString cell_sn, QString attribute_label)
