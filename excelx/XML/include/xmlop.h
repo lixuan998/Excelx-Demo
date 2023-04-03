@@ -18,11 +18,11 @@ class XmlOp{
         static bool LoadXml(const QString fileName, QString &output);
         static bool SaveXml(const QString fileName, const QString &input);
         static int AnalyzeXmlLabels(const QString &input, std::vector<QString> &output, QString label);
-        static int CountLabels(const QString xml_text, const QString label);
+        static int CountLabels(const QString xml_text, QString label);
         static bool ReplaceText(QString &xml_text, const QString &mark, const QString &replace);
-        static int AddSheetRels(QString &xml_text, int sheet_sn);
+        static int AddRelationship(QString &xml_text, QString new_relationship);
         static bool AddWorkBookSheet(QString &xml_text, int sheet_sn, int rid_sn);
-        static bool AddContentType(QString &xml_text, int sheet_sn);
+        static bool AddContentType(QString &xml_text, QString new_content_type);
         static bool AddText(QString &xml_text, QString new_text, QString label, int label_index = 1);
         
         static bool ModifyAttributes(QString &xml_text, QString xml_label, QString xml_attribute_label, QString xml_attribute_value, int xml_label_index = 1);

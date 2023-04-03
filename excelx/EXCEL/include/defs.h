@@ -6,6 +6,7 @@
 
 #define VERTICAL 0
 #define HORIZONTAL 1
+#define DEFAULT_TIME 1000
 #define WORKSHEETS_PATH "/xl/worksheets/"
 #define WORKSHEETS_RELS_PATH "/xl/worksheets/_rels/"
 #define WORKBOOK_RELS_PATH "/xl/_rels/"

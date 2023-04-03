@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     TestDrawCell(op);
     //op1.close();
     //op2.close();
-    op.close();
+    //op.close();
     return 0;
 }
 
@@ -87,5 +87,5 @@ void TestWriteBatched(ExcelOp &op)
 
 void TestDrawCell(ExcelOp &op)
 {
-    op.DrawCell(1, "0", "0", "0", "0");
+    op.DrawCell(1, "/home/climatex/Pictures/111.png", "0", "0", "0", "0");
 }

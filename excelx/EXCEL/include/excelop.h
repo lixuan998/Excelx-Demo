@@ -39,9 +39,9 @@ class ExcelOp
 
         void AddInfo(Info &info, QString label, QString text);
         void AddInfo(Info &info, QString label, cv::Mat mat);
-
+        
         bool WriteCell(int sheet_sn, QString cell_sn, QString text, QString cell_style = "0", QString cell_height = "12.8");
-        bool DrawCell(int sheet_sn, QString from_col, QString from_row, QString to_col, QString to_row, double times = 1);
+        bool DrawCell(int sheet_sn, QString image_path, QString from_col, QString from_row, QString to_col, QString to_row, double times = DEFAULT_TIME);
 
         QString GetCellAttribute(int sheet_sn, QString cell_sn, QString attribute_label);
 
@@ -56,8 +56,9 @@ class ExcelOp
         void Get_Image_SN();
         void Get_Sheet_SN();
         void Add_SharedString_Rels();
+        int AddImage(int sheet_sn, QString image_path, int &image_height, int &image_width);
+        bool AddDrawingInfo(int sheet_sn, QString from_col, QString from_row, QString to_col, QString to_row, int image_height, int image_width, double times);
         
-
         int Get_String_SN(QString str);
 
         QString Get_Value_Type(QString value);

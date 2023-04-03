@@ -62,8 +62,9 @@ int XmlOp::AnalyzeXmlLabels(const QString &input, std::vector<QString> &output, 
     return index;
 }
 
-int XmlOp::CountLabels(const QString xml_text, const QString label)
+int XmlOp::CountLabels(const QString xml_text, QString label)
 {
+    label = "<" + label;
     int cnt = 0;
     int search_pos = 0;
     int label_pos;
@@ -89,39 +90,18 @@ bool XmlOp::ReplaceText(QString &xml_text, const QString &mark, const QString &r
     return true;
 }
 
-int XmlOp::AddSheetRels(QString &xml_text, int sheet_sn)
+int XmlOp::AddRelationship(QString &xml_text, QString new_relationship)
 {
     int pos_end_relationships = xml_text.indexOf("</Relationships>");
     if(pos_end_relationships == -1)
     {
-        qDebug() << "Error: wrong xml content passed to function AddSheetRels";
+        qDebug() << "Error: wrong xml content passed to function AddRelationship";
         return -1;
     }
 
-    QString new_relationship;
-
-    int ret = LoadXml((XML_MODEL_PATH + "rels_sheet_relationship.xml"), new_relationship);
-    if(ret == false)
-    {
-        qDebug() << "Error: fail to load rels_sheet_relationship.xml";
-        return -1;
-    }
-
-    int rid_sn = CountLabels(xml_text, "Relationship");
-    ret = ReplaceText(new_relationship, "${RID_SN}", QString::number(++ rid_sn));
-    if(ret == false)
-    {
-        qDebug() << "Error: fail to replace RID_SN";
-        return -1;
-    }
-    ret = ReplaceText(new_relationship, "${SHEET_SN}", QString::number(sheet_sn));
-    if(ret == false)
-    {
-        qDebug() << "Error: fail to replace SHEET_SN";
-        return -1;
-    }
+    
     xml_text.insert(pos_end_relationships, new_relationship);
-    return rid_sn;
+    return 1;
 }
 
 bool XmlOp::AddWorkBookSheet(QString &xml_text, int sheet_sn, int rid_sn)
@@ -132,14 +112,9 @@ bool XmlOp::AddWorkBookSheet(QString &xml_text, int sheet_sn, int rid_sn)
         qDebug() << "Error: wrong xml content passed to function AddWorkBookSheet";
         return false;
     }
-    QString new_sheet;
-    int ret = LoadXml((XML_MODEL_PATH + "sheet.xml"), new_sheet);
-    if(ret == false)
-    {
-        qDebug() << "Error: fail to load sheet.xml";
-        return -1;
-    }
-    ret = ReplaceText(new_sheet, "${RID_SN}", QString::number(rid_sn));
+    QString new_sheet = "<sheet name=\"Sheet${SHEET_SN}\" sheetId=\"${SHEET_SN}\" state=\"visible\" r:id=\"rId${RID_SN}\" />";
+    
+    int ret = ReplaceText(new_sheet, "${RID_SN}", QString::number(rid_sn));
     if(ret == false)
     {
         qDebug() << "Error: fail to replace RID_SN";
@@ -155,7 +130,7 @@ bool XmlOp::AddWorkBookSheet(QString &xml_text, int sheet_sn, int rid_sn)
     return true;
 }
 
-bool XmlOp::AddContentType(QString &xml_text, int sheet_sn)
+bool XmlOp::AddContentType(QString &xml_text, QString new_content_type)
 {
     int pos_end_content_type = xml_text.indexOf("</Types>");
     if(pos_end_content_type == -1)
@@ -163,19 +138,7 @@ bool XmlOp::AddContentType(QString &xml_text, int sheet_sn)
         qDebug() << "Error: wrong xml content passed to function AddContentType";
         return false;
     }
-    QString new_content_type;
-    int ret = LoadXml((XML_MODEL_PATH + "content_type.xml"), new_content_type);
-    if(ret == false)
-    {
-        qDebug() << "Error: fail to load content_type.xml";
-        return -1;
-    }
-    ret = ReplaceText(new_content_type, "${SHEET_SN}", QString::number(sheet_sn));
-    if(ret == false)
-    {
-        qDebug() << "Error: fail to replace SHEET_SN";
-        return -1;
-    }
+    
     
     xml_text.insert(pos_end_content_type, new_content_type);
     return true;

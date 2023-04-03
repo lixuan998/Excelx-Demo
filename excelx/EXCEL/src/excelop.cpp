@@ -53,7 +53,6 @@ bool ExcelOp::open(QString src_model_path, QString dst_export_path)
     }
 
     Get_Sheet_SN();
-    Get_Image_SN();
     return true;
 }
 
@@ -121,10 +120,25 @@ bool ExcelOp::AddSheet(int sheet_model_sn)
     }
     int count = XmlOp::CountLabels(workbook_xml_rels_text, "Relationship");
     
-    int ret_rid_sn = XmlOp::AddSheetRels(workbook_xml_rels_text, sheet_sn);
-    if(ret_rid_sn == -1)
+    QString new_relationship = "<Relationship Id=\"rId${RID_SN}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet${SHEET_SN}.xml\" />";
+
+    int ret_rid_sn = XmlOp::CountLabels(workbook_xml_rels_text, "Relationship");
+    ret = XmlOp::ReplaceText(new_relationship, "${RID_SN}", QString::number(++ ret_rid_sn));
+    if(ret == false)
     {
-        qDebug() << "AddSheetRels fail";
+        qDebug() << "Error: fail to replace RID_SN";
+        return -1;
+    }
+    ret = XmlOp::ReplaceText(new_relationship, "${SHEET_SN}", QString::number(sheet_sn));
+    if(ret == false)
+    {
+        qDebug() << "Error: fail to replace SHEET_SN";
+        return -1;
+    }
+    ret = XmlOp::AddRelationship(workbook_xml_rels_text, new_relationship);
+    if(ret == -1)
+    {
+        qDebug() << "AddRels fail";
         return false;
     }
     ret = XmlOp::SaveXml(workbook_xml_rels_path, workbook_xml_rels_text);
@@ -156,8 +170,15 @@ bool ExcelOp::AddSheet(int sheet_model_sn)
         qDebug() << "fail to load file: " << content_type_path;
         return false;
     }
+    QString new_content_type = "<Override PartName=\"/xl/worksheets/sheet${SHEET_SN}.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\" />";
 
-    ret = XmlOp::AddContentType(content_type_text, sheet_sn);
+    ret = XmlOp::ReplaceText(new_content_type, "${SHEET_SN}", QString::number(sheet_sn));
+    if(ret == false)
+    {
+        qDebug() << "Error: fail to replace SHEET_SN";
+        return -1;
+    }
+    ret = XmlOp::AddContentType(content_type_text, new_content_type);
     if(ret == false)
     {
         qDebug() << "AddContentType fail";
@@ -235,8 +256,15 @@ bool ExcelOp::WriteCell(int sheet_sn, QString cell_sn, QString text, QString cel
     return false;
 }
 
-bool ExcelOp::DrawCell(int sheet_sn, QString from_col, QString from_row, QString to_col, QString to_row, double times)
+bool ExcelOp::DrawCell(int sheet_sn, QString image_path, QString from_col, QString from_row, QString to_col, QString to_row, double times)
 {
+    ret = 1;
+    QString sheet_path = cache_path + WORKSHEETS_PATH + "sheet" + QString::number(sheet_sn) + ".xml";
+    if(!QFile::exists(sheet_path))
+    {
+        qDebug() << "Sheet " << sheet_sn << " does not exist";
+        return false;
+    }
     QString xml_rels_path = cache_path + WORKSHEETS_RELS_PATH;
     QString drawings_path = cache_path + XL_PATH + "drawings/";
     QString drawing_rels_path = drawings_path + "_rels/";
@@ -249,21 +277,49 @@ bool ExcelOp::DrawCell(int sheet_sn, QString from_col, QString from_row, QString
     QString sheetn_xml_rels_path = xml_rels_path + "sheet" + QString::number(sheet_sn) + ".xml.rels";
     QString drawingn_xml_rels_path = drawing_rels_path + "drawing" + QString::number(sheet_sn) + ".xml.rels";
     QString drawingn_path = drawings_path + "drawing" + QString::number(sheet_sn) + ".xml";
+    QString content_types_text;
+    ret &= XmlOp::LoadXml(cache_path + "/[Content_Types].xml", content_types_text);
     if(!QFile::exists(sheetn_xml_rels_path))
     {
         QString tmp;
-        QString sheetn_xml_rels_model_path = XML_MODEL_PATH + "new_worksheets_xml_rels.xml";
-        XmlOp::LoadXml(sheetn_xml_rels_model_path, tmp);
-        XmlOp::SaveXml(sheetn_xml_rels_path, tmp);
+        QString sheetn_xml_rels_model_path = XML_MODEL_PATH + "new_xml_rels.xml";
+        ret &= XmlOp::LoadXml(sheetn_xml_rels_model_path, tmp);
+        ret &= XmlOp::SaveXml(sheetn_xml_rels_path, tmp);
+        QString new_content_type = "<Override PartName=\"/xl/worksheets/_rels/sheet" + QString::number(sheet_sn) + ".xml.rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" />";
+        ret &= XmlOp::AddContentType(content_types_text, new_content_type);
     }
     if(!QFile::exists(drawingn_xml_rels_path))
     {
         QString tmp;
-        QString drawingn_xml_rels_model_path = XML_MODEL_PATH + "new_worksheets_xml_rels.xml";
-        XmlOp::LoadXml(drawingn_xml_rels_model_path, tmp);
-        XmlOp::SaveXml(drawingn_xml_rels_path, tmp);
+        QString drawingn_xml_rels_model_path = XML_MODEL_PATH + "new_xml_rels.xml";
+        ret &= XmlOp::LoadXml(drawingn_xml_rels_model_path, tmp);
+        ret &= XmlOp::SaveXml(drawingn_xml_rels_path, tmp);
+        QString new_content_type = "<Override PartName=\"/xl/drawings/_rels/drawing" + QString::number(sheet_sn) + ".xml.rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" />";
+        ret &= XmlOp::AddContentType(content_types_text, new_content_type);
     }
+    if(!QFile::exists(drawingn_path))
+    {
+        
+        QString tmp;
+        QString drawingn_model_path = XML_MODEL_PATH + "new_drawing.xml";
+        ret &= XmlOp::LoadXml(drawingn_model_path, tmp);
+        ret &= XmlOp::SaveXml(drawingn_path, tmp);
+        QString new_content_type = "<Override PartName=\"/xl/drawings/drawing" + QString::number(sheet_sn) + ".xml\" ContentType=\"application/vnd.openxmlformats-officedocument.drawing+xml\" />";
+        ret &= XmlOp::AddContentType(content_types_text, new_content_type);
+    }
+    ret &= XmlOp::SaveXml(cache_path + "/[Content_Types].xml", content_types_text);
+    if(!QFile::exists(image_path))
+    {
+        qDebug() << "Image path " + image_path + " does not exist";
+        return false;
+    }
+    Get_Image_SN();
+    int image_height, image_width;
+    int image_rid =  AddImage(sheet_sn, image_path, image_height, image_width);
+    if(!image_rid) return false;
 
+    qDebug() << "ret: " << ret;
+    return ret;
 }
 
 QString ExcelOp::GetCellAttribute(int sheet_sn, QString cell_sn, QString attribute_label)
@@ -340,8 +396,6 @@ bool ExcelOp::WriteBatch(int sheet_sn, Info info, int direction)
         {
             WriteCell(sheet_sn, label_to_cell_sn_map[tmp_label][i], label_to_text_map[tmp_label][i], style, height);
         }
-        //qDebug() << "label: " << tmp_label << "replace with: " << label_to_text_map[tmp_label][0];
-        //ReplaceSharedStringText(tmp_label, label_to_text_map[tmp_label][0]);
     }
     
     return true;
@@ -374,11 +428,46 @@ void ExcelOp::Add_SharedString_Rels()
     XmlOp::LoadXml(workbook_rels_file_path, workbook_rels_text);
     int rid = XmlOp::AnalyzeXmlLabels(workbook_rels_text, rels_list, "Relationship");
     QString new_sharedstring_rels_text;
-    XmlOp::LoadXml(XML_MODEL_PATH + "new_sharedstring_rels.xml", new_sharedstring_rels_text);
+    new_sharedstring_rels_text = "<Relationship Id=\"rId${RID}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>";
     new_sharedstring_rels_text.replace("${RID}", QString::number(rid));
     int insert_pos = XmlOp::Find(workbook_rels_text, "</Relationships>");
     workbook_rels_text.insert(insert_pos, new_sharedstring_rels_text);
     XmlOp::SaveXml(workbook_rels_file_path, workbook_rels_text);
+}
+
+int ExcelOp::AddImage(int sheet_sn, QString image_path, int &image_height, int &image_width)
+{
+    int ret = 1;
+    cv::Mat mat = cv::imread(image_path.toStdString());
+    QString media_path = cache_path + MEDIA_PATH;
+    QString new_image_file_name = "image" + QString::number(++image_sn) + ".jpeg";
+    qDebug() << "Adding image " << image_sn;
+    ret &= cv::imwrite((media_path + new_image_file_name).toStdString(), mat);
+    image_height = mat.rows;
+    image_width = mat.cols;
+    if(!ret)
+    {
+        qDebug() << "Fail to write image " << image_path;
+        return 0;
+    }
+    QString tmp_text;
+    ret &= XmlOp::LoadXml(cache_path + "/[Content_Types].xml", tmp_text);
+    QString new_content_type = "<Override PartName=\"/xl/media/image" + QString::number(image_sn) + ".jpeg\" ContentType=\"image/jpeg\" />";
+    ret &= XmlOp::AddContentType(tmp_text, new_content_type);
+    ret &= XmlOp::SaveXml(cache_path + "/[Content_Types].xml", tmp_text);
+
+    QString drawings_path = cache_path + XL_PATH + "drawings/";
+    QString drawing_rels_path = drawings_path + "_rels/";
+    QString drawingn_xml_rels_path = drawing_rels_path + "drawing" + QString::number(sheet_sn) + ".xml.rels";
+    ret &= XmlOp::LoadXml(drawingn_xml_rels_path, tmp_text);
+
+    int rid_num = XmlOp::CountLabels(tmp_text, "Relationship");
+
+    QString new_relationship_type = "<Relationship Id=\"rId" + QString::number(++ rid_num) + " Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/" + new_image_file_name + " />";
+    ret &= XmlOp::AddRelationship(tmp_text, new_content_type);
+    ret &= XmlOp::SaveXml(drawingn_xml_rels_path, tmp_text);
+    if(!ret) return ret;
+    return rid_num;
 }
 
 int ExcelOp::Get_String_SN(QString str)
