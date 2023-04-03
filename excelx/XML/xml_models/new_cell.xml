@@ -1,0 +1,5 @@
+<row r="${ROW}" customFormat="false" ht="${HEIGHT}" hidden="false" customHeight="false" outlineLevel="0" collapsed="false">
+    <c r="${CELL}" s="${STYLE}" t="${TYPE}">
+        <v>${VALUE}</v>
+    </c>
+</row>
