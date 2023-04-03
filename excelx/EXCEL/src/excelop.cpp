@@ -256,6 +256,13 @@ bool ExcelOp::DrawCell(int sheet_sn, QString from_col, QString from_row, QString
         XmlOp::LoadXml(sheetn_xml_rels_model_path, tmp);
         XmlOp::SaveXml(sheetn_xml_rels_path, tmp);
     }
+    if(!QFile::exists(drawingn_xml_rels_path))
+    {
+        QString tmp;
+        QString drawingn_xml_rels_model_path = XML_MODEL_PATH + "new_worksheets_xml_rels.xml";
+        XmlOp::LoadXml(drawingn_xml_rels_model_path, tmp);
+        XmlOp::SaveXml(drawingn_xml_rels_path, tmp);
+    }
 
 }
 

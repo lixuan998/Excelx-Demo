@@ -10,6 +10,10 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required(VERSION 3.15)
 project(zipper)
 
+IF (CMAKE_SYSTEM_NAME MATCHES "Darwin") 
+  set(CMAKE_OSX_ARCHITECTURES arm64)
+ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+
 # Set useful CMake flags
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

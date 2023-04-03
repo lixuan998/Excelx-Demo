@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 project(Excelx LANGUAGES CXX)
 
+IF (CMAKE_SYSTEM_NAME MATCHES "Darwin") 
+  set(CMAKE_OSX_ARCHITECTURES arm64)
+ENDIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+
 include_directories(zipper)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
