@@ -9,13 +9,21 @@ void TestRepacement(ExcelOp &op);
 void TestWriteBatched(ExcelOp &op);
 void TestDrawCell(ExcelOp &op);
 
+#ifdef __APPLE__
+    #define PATH "/Users/climatex/Documents"
+    #define IMG_PATH "/Users/climatex/Downloads"
+#elif __linux__
+    #define PATH "/home/climatex/Documents/excel_test"
+    #define IMG_PATH "/home/climatex/Pictures"
+#endif
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     //ExcelOp op1("/home/climatex/Documents/test_batch1.xlsx", "/home/climatex/Documents/test_batch1_output.xlsx");
     //ExcelOp op2("/home/climatex/Documents/test_batch2.xlsx", "/home/climatex/Documents/test_batch2_output.xlsx");
-
-    ExcelOp op("/home/climatex/Documents/excel_test/empty.xlsx", "/home/climatex/Documents/excel_test/empty_output.xlsx");
+    QString path = PATH;
+    ExcelOp op(path + "/empty.xlsx", path + "/empty_output.xlsx");
     //op1.open();
     //op2.open();
     op.open();
@@ -26,7 +34,7 @@ int main(int argc, char *argv[])
     TestDrawCell(op);
     //op1.close();
     //op2.close();
-    //op.close();
+    op.close();
     return 0;
 }
 
@@ -87,5 +95,8 @@ void TestWriteBatched(ExcelOp &op)
 
 void TestDrawCell(ExcelOp &op)
 {
-    op.DrawCell(1, "/home/climatex/Pictures/111.png", "0", "0", "0", "0");
+    QString img_path = IMG_PATH;
+    op.DrawCell(1, img_path + "/111.png", "0", "0", "0", "0", 500);
+    op.DrawCell(1, img_path + "/111.png", "2", "2", "2", "2", 1000);
+    op.DrawCell(1, img_path + "/111.png", "6", "6", "6", "6", 1500);
 }

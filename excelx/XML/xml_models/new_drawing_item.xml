@@ -13,7 +13,7 @@
     </xdr:to>
     <xdr:pic>
         <xdr:nvPicPr>
-            <xdr:cNvPr id="${IMAGE_ID}" name="Image ${IMAGE_NAME_INDEX}" descr=""></xdr:cNvPr>
+            <xdr:cNvPr id="${IMAGE_ID}" name="Image ${IMAGE_ID}" descr=""></xdr:cNvPr>
             <xdr:cNvPicPr />
         </xdr:nvPicPr>
         <xdr:blipFill>

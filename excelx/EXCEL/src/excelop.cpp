@@ -317,7 +317,40 @@ bool ExcelOp::DrawCell(int sheet_sn, QString image_path, QString from_col, QStri
     int image_height, image_width;
     int image_rid =  AddImage(sheet_sn, image_path, image_height, image_width);
     if(!image_rid) return false;
+    image_height *= times;
+    image_width *= times;
+    QString new_drawing_item_text, drawingn_text;
+    
+    ret &= XmlOp::LoadXml(XML_MODEL_PATH + "new_drawing_item.xml", new_drawing_item_text);
+    ret &= XmlOp::LoadXml(drawingn_path, drawingn_text);
 
+    new_drawing_item_text.replace("${IMAGE_COL_FROM}", from_col);
+    new_drawing_item_text.replace("${IMAGE_ROW_FROM}", from_row);
+    new_drawing_item_text.replace("${IMAGE_COL_TO}", to_col);
+    new_drawing_item_text.replace("${IMAGE_ROW_TO}", to_row);
+    new_drawing_item_text.replace("${IMAGE_COL_OFF}", QString::number(image_width));
+    new_drawing_item_text.replace("${IMAGE_ROW_OFF}", QString::number(image_height));
+    new_drawing_item_text.replace("${IMAGE_ID}", QString::number(image_rid));
+    new_drawing_item_text.replace("${IMAGE_RID}", "rId" + QString::number(image_rid));
+    
+    ret &= XmlOp::AddText(drawingn_text, new_drawing_item_text, "</xdr:wsDr");
+    ret &= XmlOp::SaveXml(drawingn_path, drawingn_text);
+
+    QString sheetn_xml_rels_text;
+    XmlOp::LoadXml(sheetn_xml_rels_path, sheetn_xml_rels_text);
+    int ret_rid_sn = XmlOp::CountLabels(sheetn_xml_rels_text, "Relationship");
+
+    QString new_sheetn_xml_rels = "<Relationship Id=\"rId" + QString::number(++ ret_rid_sn) + "\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing\" Target=\"../drawings/drawing" + QString::number(sheet_sn) + ".xml\"/>";
+    ret &= XmlOp::AddRelationship(sheetn_xml_rels_text, new_sheetn_xml_rels);
+
+    ret &= XmlOp::SaveXml(sheetn_xml_rels_path, sheetn_xml_rels_text);
+
+    QString sheetn_addon = "<drawing r:id=\"rId" + QString::number(ret_rid_sn) + "\"/>";
+    QString sheetn_text;
+
+    ret &= XmlOp::LoadXml(sheet_path, sheetn_text);
+    ret &= XmlOp::AddText(sheetn_text, sheetn_addon, "</worksheet>");
+    ret &= XmlOp::SaveXml(sheet_path, sheetn_text);
     qDebug() << "ret: " << ret;
     return ret;
 }
@@ -463,8 +496,8 @@ int ExcelOp::AddImage(int sheet_sn, QString image_path, int &image_height, int &
 
     int rid_num = XmlOp::CountLabels(tmp_text, "Relationship");
 
-    QString new_relationship_type = "<Relationship Id=\"rId" + QString::number(++ rid_num) + " Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/" + new_image_file_name + " />";
-    ret &= XmlOp::AddRelationship(tmp_text, new_content_type);
+    QString new_relationship_type = "<Relationship Id=\"rId" + QString::number(++ rid_num) + "\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"../media/" + new_image_file_name + "\" />";
+    ret &= XmlOp::AddRelationship(tmp_text, new_relationship_type);
     ret &= XmlOp::SaveXml(drawingn_xml_rels_path, tmp_text);
     if(!ret) return ret;
     return rid_num;
