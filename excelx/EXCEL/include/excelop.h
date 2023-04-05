@@ -50,6 +50,7 @@ class ExcelOp
         int ReplaceSharedStringText(QString mark, QString text);
 
         bool WriteBatch(int sheet_sn, Info info, int direction = VERTICAL);
+        bool DrawBatch(int sheet_sn, Info info, double times = DEFAULT_TIME, int direction = VERTICAL);
     
     //private functions
     private:
@@ -62,6 +63,8 @@ class ExcelOp
         int Get_String_SN(QString str);
 
         QString Get_Value_Type(QString value);
+
+        std::vector<QString> CountRowAndCol(QString cell_sn);
 
     //public variables
     public:

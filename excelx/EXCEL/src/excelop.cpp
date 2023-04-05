@@ -196,9 +196,9 @@ bool ExcelOp::AddSheet(int sheet_model_sn)
 
 void ExcelOp::AddInfo(Info &info, QString label, QString text)
 {
-    // bool isok = true;
-    // label.toInt(&isok);
-    // if(isok == false)
+    bool isok = true;
+    label.toInt(&isok);
+    if(isok == false)
     label = QString::number(Get_String_SN(label));
     info.addInfo(label, text);
 }
@@ -351,7 +351,6 @@ bool ExcelOp::DrawCell(int sheet_sn, QString image_path, QString from_col, QStri
     ret &= XmlOp::LoadXml(sheet_path, sheetn_text);
     ret &= XmlOp::AddText(sheetn_text, sheetn_addon, "</worksheet>");
     ret &= XmlOp::SaveXml(sheet_path, sheetn_text);
-    qDebug() << "ret: " << ret;
     return ret;
 }
 
@@ -400,6 +399,8 @@ int ExcelOp::ReplaceSharedStringText(QString mark, QString text)
         return false;
     }
     XmlOp::LoadXml(str_file_path, sharedstrings_text);
+    mark = XmlOp::GetSharedString(sharedstrings_text, mark);
+    qDebug() << "text: " << text;
     ret = XmlOp::ReplaceSharedStringText(sharedstrings_text, mark, text);
     ret = XmlOp::SaveXml(str_file_path, sharedstrings_text);
     return ret;
@@ -425,12 +426,45 @@ bool ExcelOp::WriteBatch(int sheet_sn, Info info, int direction)
         QString tmp_label = it->first;
         QString style = GetCellAttribute(sheet_sn, label_to_cell_sn_map[tmp_label][0], "s");
         QString height = GetCellHeight(sheet_sn, label_to_cell_sn_map[tmp_label][0]);
-        for(int i = 0; i < it->second.size(); ++ i)
+        ReplaceSharedStringText(tmp_label, label_to_text_map[tmp_label][0]); 
+        for(int i = 1; i < it->second.size(); ++ i)
         {
             WriteCell(sheet_sn, label_to_cell_sn_map[tmp_label][i], label_to_text_map[tmp_label][i], style, height);
         }
     }
     
+    return true;
+}
+
+bool ExcelOp::DrawBatch(int sheet_sn, Info info, double times, int direction)
+{
+    QString sheet_text, sheet_file_path;
+    sheet_file_path = cache_path + WORKSHEETS_PATH + "sheet" + QString::number(sheet_sn) + ".xml";
+    ret = XmlOp::LoadXml(sheet_file_path, sheet_text);
+    int tmp_pos = XmlOp::Find(sheet_text, "<sheetData/>");
+    if(tmp_pos != -1) sheet_text.replace("<sheetData/>", "<sheetData></sheetData>");
+    if(ret == false)
+    {
+        qDebug() << "fail to load " + sheet_file_path;
+        return false;
+    }
+    std::map<QString, std::vector<QString>> label_to_cell_sn_map = XmlOp::GetCellSns(sheet_text, info, direction);
+    ret = XmlOp::SaveXml(sheet_file_path, sheet_text);
+    std::map<QString, std::vector<QString>> label_to_image_path_map = info.getLabelImagePath();
+
+    for(auto it = label_to_image_path_map.begin(); it != label_to_image_path_map.end(); ++ it)
+    {
+        QString tmp_label = it->first;
+        ReplaceSharedStringText(tmp_label, "");
+        QString style = GetCellAttribute(sheet_sn, label_to_cell_sn_map[tmp_label][0], "s");
+        QString height = GetCellHeight(sheet_sn, label_to_cell_sn_map[tmp_label][0]);
+        for(int i = 0; i < it->second.size(); ++ i)
+        {
+            WriteCell(sheet_sn, label_to_cell_sn_map[tmp_label][i], "", style, height);
+            std::vector<QString> col_and_row = CountRowAndCol(label_to_cell_sn_map[tmp_label][i]);
+            DrawCell(sheet_sn, label_to_image_path_map[tmp_label][i], col_and_row[0], col_and_row[1], col_and_row[0], col_and_row[1], times);
+        }
+    }
     return true;
 }
 
@@ -474,7 +508,6 @@ int ExcelOp::AddImage(int sheet_sn, QString image_path, int &image_height, int &
     cv::Mat mat = cv::imread(image_path.toStdString());
     QString media_path = cache_path + MEDIA_PATH;
     QString new_image_file_name = "image" + QString::number(++image_sn) + ".jpeg";
-    qDebug() << "Adding image " << image_sn;
     ret &= cv::imwrite((media_path + new_image_file_name).toStdString(), mat);
     image_height = mat.rows;
     image_width = mat.cols;
@@ -522,7 +555,6 @@ int ExcelOp::Get_String_SN(QString str)
     }
     int counts = XmlOp::CountStringSn(sharedstrings_text, str);
     XmlOp::SaveXml(str_file_path, sharedstrings_text);
-
     return counts;
 }
 
@@ -533,4 +565,59 @@ QString ExcelOp::Get_Value_Type(QString value)
     value.toInt(&isok);
     if(isok) return "n";
     else return "s";
+}
+
+std::vector<QString> ExcelOp::CountRowAndCol(QString cell_sn)
+{
+    std::vector<QString> res(2);
+    QString col, row;
+    for(int i = 0; i < cell_sn.length(); ++ i)
+    {
+        if(cell_sn[i].isDigit())
+        {
+            col = cell_sn.mid(0, i);
+            row = cell_sn.mid(i);
+            break;
+        }
+    }
+    row = QString::number(row.toInt() - 1);
+    res[1] = row;
+    int count_col = 0;
+    QString begin_col = "A";
+    QString alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    while(begin_col != col)
+    {
+        int addon = 1;
+        int cur_index = begin_col.size() - 1;
+        while(addon)
+        {
+            if(cur_index  == -1)
+            {
+                begin_col = alphabet[-1 + addon] + begin_col;
+                addon = 0;
+                continue;
+            }
+            int cur_num;
+            for(int i = 0; i < 26; ++ i)
+            {
+                if((begin_col[cur_index]) == alphabet[i])
+                {
+                    cur_num = i;
+                    break;
+                }
+            }
+            begin_col[cur_index] = alphabet[(cur_num + addon) % 26];
+            addon = (cur_num + addon) / 26;
+            -- cur_index;
+        }
+        ++ count_col;
+    }
+    
+
+    col = QString::number(count_col);
+    res[0] = col;
+
+    return res;
+    
 }

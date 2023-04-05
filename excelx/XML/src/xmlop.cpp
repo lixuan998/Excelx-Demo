@@ -306,6 +306,15 @@ QString XmlOp::GetCellHeight(QString &xml_text, QString cell_sn)
     return height;
 }
 
+QString XmlOp::GetSharedString(QString &xml_text, QString sn)
+{
+    std::vector<QString> sharedstring_vector;
+    AnalyzeXmlLabels(xml_text, sharedstring_vector, "t");
+    ExtractTexts(sharedstring_vector);
+    int index = sn.toInt();
+    return sharedstring_vector[index];
+}
+
 int XmlOp::CountStringSn(QString &xml_text, QString str)
 {
     std::vector<QString> labels_list;
@@ -319,6 +328,7 @@ int XmlOp::CountStringSn(QString &xml_text, QString str)
         XmlOp::AnalyzeXmlLabels(labels_list[i], tmp_vector, "t");
         
         XmlOp::ExtractTexts(tmp_vector);
+
         QString tmp_text;
         for(auto a : tmp_vector) tmp_text += a;
         if(tmp_text == str)
@@ -414,6 +424,20 @@ std::map<QString, std::vector<QString>> XmlOp::GetCellSns(QString &xml_text, Inf
     std::map<QString, std::vector<QString>> output;
     std::map<QString, std::vector<QString>> label_to_text_map;
     label_to_text_map = info.getLabelText();
+    for(auto it = label_to_text_map.begin(); it != label_to_text_map.end(); ++ it)
+    {
+        QString tmp_label = it->first;
+        std::vector<QString> tmp_texts = it->second;
+
+        QString label_cell_sn = GetCellSn(xml_text, tmp_label);
+        output[tmp_label].push_back(label_cell_sn);
+        for(int i = 1; i < tmp_texts.size(); ++ i)
+        {
+            output[tmp_label].push_back(NextCellSn(output[tmp_label].back(), direction));
+        }
+    }
+
+    label_to_text_map = info.getLabelImagePath();
     for(auto it = label_to_text_map.begin(); it != label_to_text_map.end(); ++ it)
     {
         QString tmp_label = it->first;

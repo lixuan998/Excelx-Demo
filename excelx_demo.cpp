@@ -8,6 +8,7 @@ void TestStyle(ExcelOp &op);
 void TestRepacement(ExcelOp &op);
 void TestWriteBatched(ExcelOp &op);
 void TestDrawCell(ExcelOp &op);
+void TestDrawBatch(ExcelOp &op);
 
 #ifdef __APPLE__
     #define PATH "/Users/climatex/Documents"
@@ -31,7 +32,9 @@ int main(int argc, char *argv[])
     //TestWriteBatched(op2);
 
     //TestRepacement(op);
-    TestDrawCell(op);
+    //TestDrawCell(op);
+    TestDrawBatch(op);
+    TestWriteBatched(op);
     //op1.close();
     //op2.close();
     op.close();
@@ -96,7 +99,25 @@ void TestWriteBatched(ExcelOp &op)
 void TestDrawCell(ExcelOp &op)
 {
     QString img_path = IMG_PATH;
-    op.DrawCell(1, img_path + "/111.png", "0", "0", "0", "0", 500);
-    op.DrawCell(1, img_path + "/111.png", "2", "2", "2", "2", 1000);
-    op.DrawCell(1, img_path + "/111.png", "6", "6", "6", "6", 1500);
+    op.DrawCell(1, img_path + "/111.png", "0", "0", "0", "0", 200);
+    op.DrawCell(1, img_path + "/face2.jpeg", "2", "2", "2", "2", 1000);
+    op.DrawCell(1, img_path + "/long_img.png", "6", "6", "6", "6", 1500);
+}
+
+void TestDrawBatch(ExcelOp &op)
+{
+    Info info;
+    QString data[4][5] = {{"${image1}", "/home/climatex/Pictures/Screenshots/A.jpeg", "/home/climatex/Pictures/Screenshots/A.jpeg", "/home/climatex/Pictures/Screenshots/A.jpeg", "/home/climatex/Pictures/Screenshots/A.jpeg"}, 
+                          {"${image2}", "/home/climatex/Pictures/Screenshots/B.png", "/home/climatex/Pictures/Screenshots/B.png", "/home/climatex/Pictures/Screenshots/B.png", "/home/climatex/Pictures/Screenshots/B.png"}, 
+                          {"${image3}", "/home/climatex/Pictures/Screenshots/C.png", "/home/climatex/Pictures/Screenshots/C.png", "/home/climatex/Pictures/Screenshots/C.png", "/home/climatex/Pictures/Screenshots/C.png"}, 
+                          {"${image4}", "/home/climatex/Pictures/111.png", "/home/climatex/Pictures/111.png", "/home/climatex/Pictures/111.png", "/home/climatex/Pictures/111.png"}};
+    for(int i = 0; i < 4; ++ i)
+    {
+        for(int j = 1; j < 5; ++ j)
+        {
+            op.AddInfo(info, data[i][0], data[i][j]);
+        }
+    }
+
+    op.DrawBatch(1, info, 1000);
 }

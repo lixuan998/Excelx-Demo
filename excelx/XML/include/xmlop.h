@@ -28,6 +28,7 @@ class XmlOp{
         static bool ModifyAttributes(QString &xml_text, QString xml_label, QString xml_attribute_label, QString xml_attribute_value, int xml_label_index = 1);
         static QString GetAttribute(QString &xml_text, QString xml_label, QString xml_attribute_label, QString xml_feature_attribute_label);
         static QString GetCellHeight(QString &xml_text, QString cell_sn);
+        static QString GetSharedString(QString &xml_text, QString sn);
         static int CountStringSn(QString &xml_text, QString str);
 
         static int Find(QString src, QString des, int index = 1);
