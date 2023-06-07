@@ -1,123 +1,182 @@
 #include "excelop.h"
-#include <ctime>
-#include <sys/time.h>
 #include <QApplication>
-#include <QDebug>
 
-void TestStyle(ExcelOp &op);
-void TestRepacement(ExcelOp &op);
-void TestWriteBatched(ExcelOp &op);
+/*
+    @brief 本函数的作用为测试添加表单的功能
+    @param[in] op ExcelOp 类的引用
+*/
+void TestAddSheet(ExcelOp &op);
+
+/*
+    @brief 本函数的作用为测试写入单元格的功能
+    @param[in] op ExcelOp 类的引用
+*/
+void TestWriteCell(ExcelOp &op);
+
+/*
+    @brief 本函数的作用为测试插入图片的功能
+    @param[in] op ExcelOp 类的引用
+*/
 void TestDrawCell(ExcelOp &op);
+
+/*
+    @brief 本函数的作用为测试替换文字的功能
+    @param[in] op ExcelOp 类的引用
+*/
+void TestRepacement(ExcelOp &op);
+
+/*
+    @brief 本函数的作用为测试批量插入文字
+    @param[in] op ExcelOp 类的引用
+*/
+void TestWriteBatched(ExcelOp &op);
+
+/*
+    @brief 本函数的作用为测试批量插入图片
+    @param[in] op ExcelOp 类的引用
+*/
 void TestDrawBatch(ExcelOp &op);
 
-#ifdef __APPLE__
-    #define PATH "/Users/climatex/Documents"
-    #define IMG_PATH "/Users/climatex/Downloads"
-#elif __linux__
-    #define PATH "/home/climatex/Documents/excel_test"
-    #define IMG_PATH "/home/climatex/Pictures"
-#endif
+QString test_file_path = "../";
+QString test_material_path = "../demo_files/";
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    //ExcelOp op1("/home/climatex/Documents/test_batch1.xlsx", "/home/climatex/Documents/test_batch1_output.xlsx");
-    //ExcelOp op2("/home/climatex/Documents/test_batch2.xlsx", "/home/climatex/Documents/test_batch2_output.xlsx");
-    QString path = PATH;
-    ExcelOp op(path + "/empty.xlsx", path + "/empty_output.xlsx");
-    //op1.open();
-    //op2.open();
+    ExcelOp op(test_file_path + "test_excel.xlsx", test_file_path + "results.xlsx");
     op.open();
-    //TestWriteBatched(op1);
-    //TestWriteBatched(op2);
 
-    //TestRepacement(op);
-    //TestDrawCell(op);
-    TestDrawBatch(op);
+    TestAddSheet(op);
+    TestWriteCell(op);
+    TestDrawCell(op);
+    TestRepacement(op);
     TestWriteBatched(op);
-    //op1.close();
-    //op2.close();
+    TestDrawBatch(op);
+
     op.close();
     return 0;
 }
 
-void TestStyle(ExcelOp &op)
+void TestAddSheet(ExcelOp &op)
 {
-    QString s1 = op.GetCellAttribute(1, "A1", "s");
-    QString s2 = op.GetCellAttribute(1, "B1", "s");
-    QString s3 = op.GetCellAttribute(1, "C1", "s");
-    QString s4 = op.GetCellAttribute(1, "D1", "s");
-    QString s5 = op.GetCellAttribute(1, "E1", "s");
-    QString s6 = op.GetCellAttribute(1, "F1", "s");
+    op.AddSheet(1);
+    op.AddSheet(-1);
+    op.AddSheet();
+}
 
-    QString height1 = op.GetCellHeight(1, "A1");
-    QString height2 = op.GetCellHeight(1, "B1");
-    QString height3 = op.GetCellHeight(1, "C1");
-    QString height4 = op.GetCellHeight(1, "D1");
-    QString height5 = op.GetCellHeight(1, "E1");
-    QString height6 = op.GetCellHeight(1, "F1");
+void TestWriteCell(ExcelOp &op)
+{
+    //读取表单1中Z1~Z4单元格的样式信息
+    QString s1 = op.GetCellAttribute(1, "Z1", "s");
+    QString s2 = op.GetCellAttribute(1, "Z2", "s");
+    QString s3 = op.GetCellAttribute(1, "Z3", "s");
+    QString s4 = op.GetCellAttribute(1, "Z4", "s");
 
-    QString test_arr[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    //读取表单1中Z1~Z4单元格的高度信息
+    QString height1 = op.GetCellHeight(1, "Z1");
+    QString height2 = op.GetCellHeight(1, "Z2");
+    QString height3 = op.GetCellHeight(1, "Z3");
+    QString height4 = op.GetCellHeight(1, "Z4");
+    
+
+    QString test_arr[]{"Text1", "Text2", "Text3", "Text4", "Test5"};
     QString cells[] = {"A", "B", "C", "D", "E", "F"};
-    QString s[] = {s1, s2, s3, s4, s5, s6};
+    QString s[] = {s1, s2, s3, s4};
 
-    QString heights[] = {height1, height2, height3, height4, height5, height6};
+    QString heights[] = {height1, height2, height3, height4};
+
+    //循环使用WriteCell写入单元格
     for(int i = 0; i < 6; ++ i)
     {
-        for(int j = 0; j < 26; ++ j)
+        for(int j = 0; j < 5; ++ j)
         {
-            op.WriteCell(1, cells[i] + QString::number(j + 10), test_arr[j], s[i], heights[i]);
+            if(j != 4) op.WriteCell(1, cells[i] + QString::number(2 * j + 1), test_arr[j], s[j], heights[j]);
+            else op.WriteCell(1, cells[i] + QString::number(2 * j + 1), test_arr[j]);
         }
     }
 }
 
 void TestRepacement(ExcelOp &op)
 {
-    op.ReplaceSharedStringText("index", "这是");
-    op.ReplaceSharedStringText("item1", "替换");
-    op.ReplaceSharedStringText("item2", "文本");
-    op.ReplaceSharedStringText("largeeeeeeeeeeeeeeeeeeeeeeeeitem", "的");
-    op.ReplaceSharedStringText("item4", "测");
-    op.ReplaceSharedStringText("item5", "试");
+    op.ReplaceSharedStringText("Style1", "样式一");
+    op.ReplaceSharedStringText("Style2", "样式二");
+    op.ReplaceSharedStringText("Style3", "样式三");
+    op.ReplaceSharedStringText("Style4", "样式四");
 }
 
 void TestWriteBatched(ExcelOp &op)
 {
-    Info info;
-    QString data[4][5] = {{"${number1}", "A", "AA", "AAA", "AAAA"}, {"${number2}", "B", "BB", "BBB", "BBBB"}, {"${number3}", "8", "9", "10", "11"}, {"${number4}", "12", "13", "14", "15"}};
+    Info info, info_horizontal;
+
+    //测试垂直插入
+    QString data[4][5] = {{"${writeBatch1}", "1", "11", "111", "1111"}, {"${writeBatch2}", "2", "22", "222", "222"}, {"${writeBatch3}", "3", "33", "333", "3333"}, {"${writeBatch4}", "4", "44", "444", "4444"}};
     for(int i = 0; i < 4; ++ i)
     {
         for(int j = 1; j < 5; ++ j)
         {
+            //循环载入插入文字信息
             op.AddInfo(info, data[i][0], data[i][j]);
         }
     }
 
     op.WriteBatch(1, info);
-}
 
-void TestDrawCell(ExcelOp &op)
-{
-    QString img_path = IMG_PATH;
-    op.DrawCell(1, img_path + "/111.png", "0", "0", "0", "0", 200);
-    op.DrawCell(1, img_path + "/face2.jpeg", "2", "2", "2", "2", 1000);
-    op.DrawCell(1, img_path + "/long_img.png", "6", "6", "6", "6", 1500);
-}
-
-void TestDrawBatch(ExcelOp &op)
-{
-    Info info;
-    QString data[4][5] = {{"${image1}", "/home/climatex/Pictures/Screenshots/A.jpeg", "/home/climatex/Pictures/Screenshots/A.jpeg", "/home/climatex/Pictures/Screenshots/A.jpeg", "/home/climatex/Pictures/Screenshots/A.jpeg"}, 
-                          {"${image2}", "/home/climatex/Pictures/Screenshots/B.png", "/home/climatex/Pictures/Screenshots/B.png", "/home/climatex/Pictures/Screenshots/B.png", "/home/climatex/Pictures/Screenshots/B.png"}, 
-                          {"${image3}", "/home/climatex/Pictures/Screenshots/C.png", "/home/climatex/Pictures/Screenshots/C.png", "/home/climatex/Pictures/Screenshots/C.png", "/home/climatex/Pictures/Screenshots/C.png"}, 
-                          {"${image4}", "/home/climatex/Pictures/111.png", "/home/climatex/Pictures/111.png", "/home/climatex/Pictures/111.png", "/home/climatex/Pictures/111.png"}};
+    //测试水平插入
+    QString data_horizontal[4][5] = {{"${writeBatch11}", "1", "11", "111", "1111"}, {"${writeBatch22}", "2", "22", "222", "222"}, {"${writeBatch33}", "3", "33", "333", "3333"}, {"${writeBatch44}", "4", "44", "444", "4444"}};
     for(int i = 0; i < 4; ++ i)
     {
         for(int j = 1; j < 5; ++ j)
         {
+            //循环载入插入文字信息
+            op.AddInfo(info_horizontal, data_horizontal[i][0], data_horizontal[i][j]);
+        }
+    }
+
+    op.WriteBatch(1, info_horizontal, HORIZONTAL);
+}
+
+void TestDrawCell(ExcelOp &op)
+{
+    QString img_path = test_material_path;
+    op.DrawCell(1, img_path + "steel1.jpeg", "0", "12", "1", "14");
+    op.DrawCell(1, img_path + "steel2.jpeg", "2", "12", "3", "14");
+    op.DrawCell(1, img_path + "steel3.jpeg", "4", "12", "5", "14");
+    op.DrawCell(1, img_path + "steel4.jpeg", "6", "12", "7", "14");
+}
+
+void TestDrawBatch(ExcelOp &op)
+{
+    Info info, info_horizontal;
+    QString img_path = test_material_path;
+    //测试垂直插入
+    QString data[4][5] = {{"${image1}", img_path + "steel1.jpeg", img_path + "steel1.jpeg", img_path + "steel1.jpeg", img_path + "steel1.jpeg"}, 
+                          {"${image2}", img_path + "steel2.jpeg", img_path + "steel2.jpeg", img_path + "steel2.jpeg", img_path + "steel2.jpeg"}, 
+                          {"${image3}", img_path + "steel3.jpeg", img_path + "steel3.jpeg", img_path + "steel3.jpeg", img_path + "steel3.jpeg"}, 
+                          {"${image4}", img_path + "steel4.jpeg", img_path + "steel4.jpeg", img_path + "steel4.jpeg", img_path + "steel4.jpeg"}};
+    for(int i = 0; i < 4; ++ i)
+    {
+        for(int j = 1; j < 5; ++ j)
+        {
+            //循环载入插入图片信息
             op.AddInfo(info, data[i][0], data[i][j]);
         }
     }
 
     op.DrawBatch(1, info, 1000);
+
+    //测试水平插入
+    QString data_horizontal[4][5] = {{"${image11}", img_path + "steel1.jpeg", img_path + "steel1.jpeg", img_path + "steel1.jpeg", img_path + "steel1.jpeg"}, 
+                          {"${image22}", img_path + "steel2.jpeg", img_path + "steel2.jpeg", img_path + "steel2.jpeg", img_path + "steel2.jpeg"}, 
+                          {"${image33}", img_path + "steel3.jpeg", img_path + "steel3.jpeg", img_path + "steel3.jpeg", img_path + "steel3.jpeg"}, 
+                          {"${image44}", img_path + "steel4.jpeg", img_path + "steel4.jpeg", img_path + "steel4.jpeg", img_path + "steel4.jpeg"}};
+    for(int i = 0; i < 4; ++ i)
+    {
+        for(int j = 1; j < 5; ++ j)
+        {
+            //循环载入插入图片信息
+            op.AddInfo(info_horizontal, data_horizontal[i][0], data_horizontal[i][j]);
+        }
+    }
+
+    op.DrawBatch(1, info_horizontal, 1000, HORIZONTAL);
 }

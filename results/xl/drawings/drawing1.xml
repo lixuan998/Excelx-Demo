@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"
+    xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+    xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<xdr:twoCellAnchor editAs="oneCell">
+    <xdr:from>
+        <xdr:col>0</xdr:col>
+        <xdr:colOff>0</xdr:colOff>
+        <xdr:row>12</xdr:row>
+        <xdr:rowOff>0</xdr:rowOff>
+    </xdr:from>
+    <xdr:to>
+        <xdr:col>1</xdr:col>
+        <xdr:colOff>1920000</xdr:colOff>
+        <xdr:row>14</xdr:row>
+        <xdr:rowOff>1080000</xdr:rowOff>
+    </xdr:to>
+    <xdr:pic>
+        <xdr:nvPicPr>
+            <xdr:cNvPr id="1" name="Image ${IMAGE_NAME_INDEX}" descr=""></xdr:cNvPr>
+            <xdr:cNvPicPr />
+        </xdr:nvPicPr>
+        <xdr:blipFill>
+            <a:blip r:embed="rId1"></a:blip>
+            <a:stretch />
+        </xdr:blipFill>
+        <xdr:spPr>
+            <a:xfrm>
+                <a:off x="0" y="0" />
+                <a:ext cx="1920000" cy="1080000" />
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+                <a:avLst />
+            </a:prstGeom>
+            <a:ln w="0">
+                <a:noFill />
+            </a:ln>
+        </xdr:spPr>
+    </xdr:pic>
+    <xdr:clientData />
+</xdr:twoCellAnchor><xdr:twoCellAnchor editAs="oneCell">
+    <xdr:from>
+        <xdr:col>2</xdr:col>
+        <xdr:colOff>0</xdr:colOff>
+        <xdr:row>12</xdr:row>
+        <xdr:rowOff>0</xdr:rowOff>
+    </xdr:from>
+    <xdr:to>
+        <xdr:col>3</xdr:col>
+        <xdr:colOff>1920000</xdr:colOff>
+        <xdr:row>14</xdr:row>
+        <xdr:rowOff>1080000</xdr:rowOff>
+    </xdr:to>
+    <xdr:pic>
+        <xdr:nvPicPr>
+            <xdr:cNvPr id="2" name="Image ${IMAGE_NAME_INDEX}" descr=""></xdr:cNvPr>
+            <xdr:cNvPicPr />
+        </xdr:nvPicPr>
+        <xdr:blipFill>
+            <a:blip r:embed="rId2"></a:blip>
+            <a:stretch />
+        </xdr:blipFill>
+        <xdr:spPr>
+            <a:xfrm>
+                <a:off x="0" y="0" />
+                <a:ext cx="1920000" cy="1080000" />
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+                <a:avLst />
+            </a:prstGeom>
+            <a:ln w="0">
+                <a:noFill />
+            </a:ln>
+        </xdr:spPr>
+    </xdr:pic>
+    <xdr:clientData />
+</xdr:twoCellAnchor><xdr:twoCellAnchor editAs="oneCell">
+    <xdr:from>
+        <xdr:col>4</xdr:col>
+        <xdr:colOff>0</xdr:colOff>
+        <xdr:row>12</xdr:row>
+        <xdr:rowOff>0</xdr:rowOff>
+    </xdr:from>
+    <xdr:to>
+        <xdr:col>5</xdr:col>
+        <xdr:colOff>1920000</xdr:colOff>
+        <xdr:row>14</xdr:row>
+        <xdr:rowOff>1080000</xdr:rowOff>
+    </xdr:to>
+    <xdr:pic>
+        <xdr:nvPicPr>
+            <xdr:cNvPr id="3" name="Image ${IMAGE_NAME_INDEX}" descr=""></xdr:cNvPr>
+            <xdr:cNvPicPr />
+        </xdr:nvPicPr>
+        <xdr:blipFill>
+            <a:blip r:embed="rId3"></a:blip>
+            <a:stretch />
+        </xdr:blipFill>
+        <xdr:spPr>
+            <a:xfrm>
+                <a:off x="0" y="0" />
+                <a:ext cx="1920000" cy="1080000" />
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+                <a:avLst />
+            </a:prstGeom>
+            <a:ln w="0">
+                <a:noFill />
+            </a:ln>
+        </xdr:spPr>
+    </xdr:pic>
+    <xdr:clientData />
+</xdr:twoCellAnchor><xdr:twoCellAnchor editAs="oneCell">
+    <xdr:from>
+        <xdr:col>6</xdr:col>
+        <xdr:colOff>0</xdr:colOff>
+        <xdr:row>12</xdr:row>
+        <xdr:rowOff>0</xdr:rowOff>
+    </xdr:from>
+    <xdr:to>
+        <xdr:col>7</xdr:col>
+        <xdr:colOff>1920000</xdr:colOff>
+        <xdr:row>14</xdr:row>
+        <xdr:rowOff>1080000</xdr:rowOff>
+    </xdr:to>
+    <xdr:pic>
+        <xdr:nvPicPr>
+            <xdr:cNvPr id="4" name="Image ${IMAGE_NAME_INDEX}" descr=""></xdr:cNvPr>
+            <xdr:cNvPicPr />
+        </xdr:nvPicPr>
+        <xdr:blipFill>
+            <a:blip r:embed="rId4"></a:blip>
+            <a:stretch />
+        </xdr:blipFill>
+        <xdr:spPr>
+            <a:xfrm>
+                <a:off x="0" y="0" />
+                <a:ext cx="1920000" cy="1080000" />
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+                <a:avLst />
+            </a:prstGeom>
+            <a:ln w="0">
+                <a:noFill />
+            </a:ln>
+        </xdr:spPr>
+    </xdr:pic>
+    <xdr:clientData />
+</xdr:twoCellAnchor></xdr:wsDr>

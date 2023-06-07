@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+    xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"
+    xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:etc="http://www.wps.cn/officeDocument/2017/etCustomData">
+    <sheetPr/>
+    <dimension ref="A1:Z20"/>
+    <sheetViews>
+        <sheetView tabSelected="1" workbookViewId="0">
+            <selection activeCell="L20" sqref="L20"/>
+        </sheetView>
+    </sheetViews>
+    <sheetFormatPr defaultColWidth="8.88888888888889" defaultRowHeight="15"/>
+    <cols>
+        <col min="1" max="1" width="14.7777777777778" customWidth="1"/>
+        <col min="6" max="6" width="13.8888888888889" customWidth="1"/>
+        <col min="12" max="12" width="13.8888888888889" customWidth="1"/>
+        <col min="17" max="17" width="14.7777777777778" customWidth="1"/>
+        <col min="26" max="26" width="13.7777777777778" customWidth="1"/>
+    </cols>
+    <sheetData>
+        <row r="1" ht="38" customHeight="1" spans="26:26">
+            <c r="Z1" s="1" t="s">
+                <v>0</v>
+            </c>
+        </row>
+        <row r="2" ht="24" customHeight="1" spans="26:26">
+            <c r="Z2" s="2" t="s">
+                <v>1</v>
+            </c>
+        </row>
+        <row r="3" ht="25" customHeight="1" spans="26:26">
+            <c r="Z3" s="3" t="s">
+                <v>2</v>
+            </c>
+        </row>
+        <row r="4" ht="28" customHeight="1" spans="26:26">
+            <c r="Z4" s="4" t="s">
+                <v>3</v>
+            </c>
+        </row>
+        <row r="20" spans="1:17">
+            <c r="A20" t="s">
+                <v>4</v>
+            </c>
+            <c r="F20" t="s">
+                <v>5</v>
+            </c>
+            <c r="L20" t="s">
+                <v>6</v>
+            </c>
+            <c r="Q20" t="s">
+                <v>7</v>
+            </c>
+        </row>
+    </sheetData>
+    <pageMargins left="0.75" right="0.75" top="1" bottom="1" header="0.5" footer="0.5"/>
+    <headerFooter/>
+</worksheet>

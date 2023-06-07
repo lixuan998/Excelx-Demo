@@ -1,0 +1,37 @@
+<xdr:twoCellAnchor editAs="oneCell">
+    <xdr:from>
+        <xdr:col>${IMAGE_COL_FROM}</xdr:col>
+        <xdr:colOff>0</xdr:colOff>
+        <xdr:row>${IMAGE_ROW_FROM}</xdr:row>
+        <xdr:rowOff>0</xdr:rowOff>
+    </xdr:from>
+    <xdr:to>
+        <xdr:col>${IMAGE_COL_TO}</xdr:col>
+        <xdr:colOff>${IMAGE_COL_OFF}</xdr:colOff>
+        <xdr:row>${IMAGE_ROW_TO}</xdr:row>
+        <xdr:rowOff>${IMAGE_ROW_OFF}</xdr:rowOff>
+    </xdr:to>
+    <xdr:pic>
+        <xdr:nvPicPr>
+            <xdr:cNvPr id="${IMAGE_ID}" name="Image ${IMAGE_NAME_INDEX}" descr=""></xdr:cNvPr>
+            <xdr:cNvPicPr />
+        </xdr:nvPicPr>
+        <xdr:blipFill>
+            <a:blip r:embed="${IMAGE_RID}"></a:blip>
+            <a:stretch />
+        </xdr:blipFill>
+        <xdr:spPr>
+            <a:xfrm>
+                <a:off x="0" y="0" />
+                <a:ext cx="${IMAGE_COL_OFF}" cy="${IMAGE_ROW_OFF}" />
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+                <a:avLst />
+            </a:prstGeom>
+            <a:ln w="0">
+                <a:noFill />
+            </a:ln>
+        </xdr:spPr>
+    </xdr:pic>
+    <xdr:clientData />
+</xdr:twoCellAnchor>
